@@ -16,7 +16,7 @@ for rucksack in rucksacks:
     unique_item_types = list(set(rucksack))
 
     for item_type in unique_item_types:
-        if first_compartment.count(item_type) > 0 & second_compartment.count(item_type) > 0:
+        if first_compartment.count(item_type) > 0 and second_compartment.count(item_type) > 0:
             total += item_priorities[item_type]
 
 print(f"Part 1: {total}")
