@@ -5,6 +5,8 @@ A_to_Z = list(map(chr, range(ord('A'), ord('Z') + 1)))
 
 item_priorities = dict(zip(a_to_z + A_to_Z, range(1, 53)))
 
+# Part 1
+
 total = 0
 
 for rucksack in rucksacks:
@@ -20,3 +22,17 @@ for rucksack in rucksacks:
             total += item_priorities[item_type]
 
 print(f"Part 1: {total}")
+
+# Part 2
+
+groups = zip(*(iter(rucksacks),) * 3) # form a list of groups with 3 rucksacks per group
+
+total_part2 = 0
+
+for group in groups:
+    shared_item_type_candidates = list(set(group[0])) # the shared item type must be in the first rucksack
+    for candidate in shared_item_type_candidates:
+        if all(rucksack.count(candidate) > 0 for rucksack in group):
+            total_part2 += item_priorities[candidate]
+
+print(f"Part 2: {total_part2}")
