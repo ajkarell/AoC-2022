@@ -27,9 +27,9 @@ const isOverlapping = (rangePair) => {
   const B = rangePair[1];
 
   if (A.start <= B.start) {
-    return A.start <= B.end && A.end >= B.start;
+    return A.end >= B.start;
   } else {
-    return B.start <= A.end && B.end >= A.start;
+    return B.end >= A.start;
   }
 };
 
