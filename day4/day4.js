@@ -5,22 +5,31 @@ const toRange = (assignmentString) => {
   return {
     start: range[0],
     end: range[1],
+    magnitude: range[1] - range[0],
   };
 };
 
 const toRangePairs = (pairString) => pairString.split(",").map(toRange);
 
-const isOverlappingRangePair = (rangePair) => {
+const isFullyOverlapping = (rangePair) => {
   const A = rangePair[0];
   const B = rangePair[1];
 
-  const magnitudeA = A.end - A.start;
-  const magnitudeB = B.end - B.start;
-
-  if (magnitudeA >= magnitudeB) {
+  if (A.magnitude >= B.magnitude) {
     return A.start <= B.start && B.end <= A.end;
   } else {
     return B.start <= A.start && A.end <= B.end;
+  }
+};
+
+const isOverlapping = (rangePair) => {
+  const A = rangePair[0];
+  const B = rangePair[1];
+
+  if (A.start <= B.start) {
+    return A.start <= B.end && A.end >= B.start;
+  } else {
+    return B.start <= A.end && B.end >= A.start;
   }
 };
 
@@ -30,11 +39,15 @@ fs.readFile("input.txt", "utf8", (err, input) => {
     return;
   }
 
-  const numOverlaps = input
+  const overlappingRangePairs = input
     .split("\n")
     .filter((line) => line.length > 0)
     .map(toRangePairs)
-    .filter(isOverlappingRangePair).length;
+    .filter(isOverlapping);
 
-  console.log(numOverlaps);
+  const numFullOverlaps =
+    overlappingRangePairs.filter(isFullyOverlapping).length;
+
+  console.log(`Part 1: ${numFullOverlaps}`);
+  console.log(`Part 2: ${overlappingRangePairs.length}`);
 });
