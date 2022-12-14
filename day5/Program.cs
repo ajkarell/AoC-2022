@@ -20,7 +20,7 @@
         }
     };
 
-    public static void Main(string[] args)
+    static (Dictionary<int, Stack<char>>, IEnumerable<Command>) ParseInput()
     {
         var input = File.ReadAllText("input.txt");
         var inputParts = input.Split("\n\n");
@@ -33,8 +33,7 @@
             .Split('\n')
             .SkipLast(1)
             .Select(TrimPadding)
-            .Reverse()
-            .ToArray();
+            .Reverse();
 
         var crateStacks = new Dictionary<int, Stack<char>> {
             { 1, new Stack<char>() },
@@ -60,11 +59,34 @@
             }
         }
 
-        Command[] procedure = inputParts[1]
+        var procedure = inputParts[1]
             .Split('\n', StringSplitOptions.RemoveEmptyEntries)
-            .Select(cmdStr => new Command(cmdStr))
-            .ToArray();
+            .Select(cmdStr => new Command(cmdStr));
 
+        return (crateStacks, procedure);
+    }
+
+    public static void Main(string[] args)
+    {
+        {
+            (var crateStacks, var procedure) = ParseInput();
+
+            var movedStacks = MoveWithCrateMover9000(crateStacks, procedure);
+            var topCratesPart1 = new String(movedStacks.Select(kv => kv.Value.First()).ToArray());
+            Console.WriteLine(topCratesPart1);
+        }
+
+        {
+            (var crateStacks, var procedure) = ParseInput();
+
+            var movedStacks = MoveWithCrateMover9001(crateStacks, procedure);
+            var topCratesPart2 = new String(movedStacks.Select(kv => kv.Value.First()).ToArray());
+            Console.WriteLine(topCratesPart2);
+        }
+    }
+
+    static Dictionary<int, Stack<char>> MoveWithCrateMover9000(Dictionary<int, Stack<char>> crateStacks, IEnumerable<Command> procedure)
+    {
         foreach (var command in procedure)
         {
             for (int i = 0; i < command.Amount; i++)
@@ -74,8 +96,28 @@
             }
         }
 
-        var topCrossSection = new String(crateStacks.Select(kv => kv.Value.First()).ToArray());
+        return crateStacks;
+    }
 
-        Console.WriteLine(topCrossSection);
+    static Dictionary<int, Stack<char>> MoveWithCrateMover9001(Dictionary<int, Stack<char>> crateStacks, IEnumerable<Command> procedure)
+    {
+        foreach (var command in procedure)
+        {
+            var grabbed = new List<char>();
+
+            for (int i = 0; i < command.Amount; i++)
+            {
+                grabbed.Add(crateStacks[command.From].Pop());
+            }
+
+            grabbed.Reverse();
+
+            foreach (var crate in grabbed)
+            {
+                crateStacks[command.To].Push(crate);
+            }
+        }
+
+        return crateStacks;
     }
 }
